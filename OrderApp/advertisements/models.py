@@ -21,6 +21,14 @@ class Advertisement(models.Model):
     condition = models.BooleanField(default=False, verbose_name="Состояние")
     created_at = models.DateTimeField(auto_created=True, verbose_name="дата добавления")
     category = models.ForeignKey(CategoryAds, on_delete=models.CASCADE, verbose_name="Категория", related_name="ads")
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        related_name="owners",
+        blank=True,
+        null=True
+    )
 
     class Meta:
         verbose_name = "Объявление"
@@ -40,15 +48,20 @@ class ExchangeProposal(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name="Отправитель",
-        related_name="s_proposals"
+        related_name="r_proposals"
     )
     receiver_id = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name="Получатель",
-        related_name="r_proposals"
+        related_name="s_proposals"
     )
-    status = models.CharField(max_length=255, choices=StatusChoice.choices, verbose_name="Статус")
+    status = models.CharField(
+        max_length=255,
+        choices=StatusChoice.choices,
+        verbose_name="Статус",
+        default=StatusChoice.PENDING
+    )
     comment = models.CharField(max_length=255, verbose_name="Комментарий")
     created_at = models.DateTimeField(auto_created=True, verbose_name="дата добавления")
 

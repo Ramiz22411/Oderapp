@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+<body class="d-flex flex-column min-vh-100">
+<div class="layout-wrapper flex-grow-1 d-flex flex-column">
+
+    <!-- page-content-->
+    <div class="page-content flex-grow-1">
+        {% include 'header.html' %}
+        <div class="px-3">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+</div>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
