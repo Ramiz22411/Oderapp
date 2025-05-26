@@ -8,4 +8,6 @@ urlpatterns = [
     path("ads-update", views.AdsUpdate.as_view(), name="ads-update"),
     path('ads-detail/<int:pk>/', views.AdsDetail.as_view(), name="ads-detail"),
     path('ads-delete/<int:pk>/', views.AdsDelete.as_view(), name="ads-delete"),
+    path('my-ads/', views.MyadsList.as_view(), name="my-ads"),
+    path('exchange-offers/', views.ExchangeOfferList.as_view(), name="exchange-offers")
 ]

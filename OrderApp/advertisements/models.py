@@ -16,9 +16,9 @@ class CategoryAds(models.Model):
 
 class Advertisement(models.Model):
     title = models.CharField(max_length=255, verbose_name="Заголовок")
-    description = models.TextField(verbose_name="Описания")
     image = models.ImageField(upload_to="order_image", verbose_name="Картинка")
-    condition = models.BooleanField(default=False, verbose_name="Состояние")
+    condition = models.BooleanField(default=False, verbose_name="Состояние новое?")
+    description = models.TextField(verbose_name="Описания")
     created_at = models.DateTimeField(auto_created=True, verbose_name="дата добавления")
     category = models.ForeignKey(CategoryAds, on_delete=models.CASCADE, verbose_name="Категория", related_name="ads")
     owner = models.ForeignKey(
