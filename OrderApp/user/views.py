@@ -12,7 +12,9 @@ from .forms import CustomLoginForm
 class SignIn(LoginView):
     template_name = 'user/signin.html'
     authentication_form = CustomLoginForm
-    success_url = reverse_lazy("advertisements: my-ads")
+
+    def get_success_url(self):
+        return reverse_lazy("ads-list")
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:

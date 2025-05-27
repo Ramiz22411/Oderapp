@@ -16,10 +16,10 @@ class CategoryAds(models.Model):
 
 class Advertisement(models.Model):
     title = models.CharField(max_length=255, verbose_name="Заголовок")
-    image = models.ImageField(upload_to="order_image", verbose_name="Картинка")
+    image = models.ImageField(upload_to="order_image/", verbose_name="Картинка")
     condition = models.BooleanField(default=False, verbose_name="Состояние новое?")
     description = models.TextField(verbose_name="Описания")
-    created_at = models.DateTimeField(auto_created=True, verbose_name="дата добавления")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата добавления")
     category = models.ForeignKey(CategoryAds, on_delete=models.CASCADE, verbose_name="Категория", related_name="ads")
     owner = models.ForeignKey(
         User,
@@ -63,7 +63,7 @@ class ExchangeProposal(models.Model):
         default=StatusChoice.PENDING
     )
     comment = models.CharField(max_length=255, verbose_name="Комментарий")
-    created_at = models.DateTimeField(auto_created=True, verbose_name="дата добавления")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="дата добавления")
 
     class Meta:
         verbose_name = "Запрос на обмен"

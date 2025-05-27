@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Объявления</h2>
+    <!-- 📦 Вывод объявлений -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        {% for ad in ads %}
+        <div class="col">
+            <div class="card h-100" style="max-width: 100%;">
+                <img src="{{ ad.image.url }}" class="card-img-top" alt="{{ ad.title }}"
+                     style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ ad.title }}</h5>
+                    {% if ad.condition %}
+                    <span class="badge bg-success">Новое</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Б/у</span>
+                    {% endif %}
+
+                    <!-- Кнопки изменить и удалить -->
+                    <div class="mt-auto d-flex justify-content-between">
+                        <a href="{% url 'ads-update' ad.id %}" class="btn btn-primary btn-sm">Изменить</a>
+
+                        <form action="{% url 'ads-delete' ad.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Вы уверены, что хотите удалить это объявление?');">
+                                Удалить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

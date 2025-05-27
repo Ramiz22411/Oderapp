@@ -1,89 +1,70 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Добро пожаловать стол с объявлениями</h1>
+    <h2 class="mb-4 text-center">Объявления</h2>
 
-    <!-- Боковая панель фильтрации -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <form method="get" class="border rounded p-3 bg-light">
-                <h5 class="mb-3">Фильтр</h5>
-
-                <div class="mb-3">
-                    <label for="category" class="form-label">Категория</label>
-                    <select id="category" name="category" class="form-select form-select-sm">
-                        <option value="">Все</option>
-                        <option value="electronics">Электроника</option>
-                        <option value="furniture">Мебель</option>
-                        <option value="clothes">Одежда</option>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="condition" class="form-label">Состояние</label>
-                    <select id="condition" name="condition" class="form-select form-select-sm">
-                        <option value="">Все</option>
-                        <option value="new">Новый</option>
-                        <option value="used">Б/У</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn btn-sm btn-primary w-100">Применить</button>
-            </form>
+    <!-- 🔍 Форма фильтрации -->
+    <form method="get" class="row gy-2 gx-3 align-items-center mb-4">
+        <div class="col-sm-4">
+            <select name="category" class="form-select">
+                <option value="">Все категории</option>
+                {% for cat in filter.form.fields.category.queryset %}
+                    <option value="{{ cat.pk }}"
+                        {% if request.GET.category|default_if_none:""|stringformat:"s" == cat.pk|stringformat:"s" %}
+                            selected
+                        {% endif %}>
+                        {{ cat.name }}
+                    </option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="col-md-9">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-                <!-- Карточка 1 -->
-                <div class="col">
-                    <div class="card h-100" style="width: 100%; max-width: 300px;">
-                        <img src="{% static 'images/laptop.jpg' %}" class="card-img-top" alt="Ноутбук"
-                             style="height: 200px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title">Ноутбук Dell</h5>
-                            <p class="card-text">
-                    <span class="text-warning">
-                        <i class="bi bi-check-circle"></i> Б/У
-                    </span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Карточка 2 -->
-                <div class="col">
-                    <div class="card h-100" style="width: 100%; max-width: 300px;">
-                        <img src="{% static 'images/sofa.jpg' %}" class="card-img-top" alt="Диван"
-                             style="height: 200px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title">Диван IKEA</h5>
-                            <p class="card-text">
-                    <span class="text-success">
-                        <i class="bi bi-check-circle-fill"></i> Новый
-                    </span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Карточка 3 -->
-                <div class="col">
-                    <div class="card h-100" style="width: 100%; max-width: 300px;">
-                        <img src="{% static 'images/phone.jpg' %}" class="card-img-top" alt="Смартфон"
-                             style="height: 200px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title">Смартфон Samsung</h5>
-                            <p class="card-text">
-                    <span class="text-warning">
-                        <i class="bi bi-check-circle"></i> Б/У
-                    </span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
+        <div class="col-auto">
+            <div class="form-check">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="condition"
+                    value="true"
+                    id="conditionCheck"
+                    {% if request.GET.condition %}checked{% endif %}
+                >
+                <label class="form-check-label" for="conditionCheck">
+                    Только новое
+                </label>
             </div>
         </div>
+
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Применить фильтр</button>
+        </div>
+    </form>
+
+    <!-- 📦 Вывод объявлений -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        {% for ad in ads %}
+            <div class="col">
+                <div class="card h-100" style="max-width: 100%;">
+                    <img src="{{ ad.image.url }}" class="card-img-top" alt="{{ ad.title }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ ad.title }}</h5>
+                        {% if ad.condition %}
+                            <span class="badge bg-success">Новое</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Б/у</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-warning text-center">
+                    По вашему фильтру ничего не найдено.
+                </div>
+            </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

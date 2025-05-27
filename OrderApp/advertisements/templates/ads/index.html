@@ -1,8 +1,39 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 <div class="container mt-5">
     <h1 class="text-center mb-4">Добро пожаловать стол с объявлениями</h1>
 
+    {% if request.GET %}
+    {% if ads %}
+
+    <h2 class="text-center mb-4">Вот что я нашел по вашему запросу</h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        {% for i in ads %}
+        <div class="col">
+            <div class="card h-100" style="max-width: 300px;">
+                <img src="{{ i.image.url }}" class="card-img-top" alt="" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ i.title }}</h5>
+                    <p class="card-text">
+                        {% if i.condition %}
+                        <span class="badge bg-success">Новое</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Б/у</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-muted">По вашему запросу ничего не найдено.</p>
+    {% endif %}
+    {% else %}
+    <p class="text-center text-muted">Введите запрос для поиска объявлений.</p>
+    {% endif %}
 </div>
 {% endblock %}

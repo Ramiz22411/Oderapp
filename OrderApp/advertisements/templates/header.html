@@ -29,8 +29,15 @@
             </ul>
 
             <!-- Правая часть: Поиск + Вход -->
-            <form class="d-flex align-items-center" role="search">
-                <input class="form-control me-2" type="search" placeholder="Поиск" aria-label="Поиск">
+            <form class="d-flex align-items-center" role="search" method="get" action="{% url 'index' %}">
+                <input
+                        class="form-control me-2"
+                        type="search"
+                        name="title"
+                        placeholder="Поиск"
+                        aria-label="Поиск"
+                        value="{{ request.GET.title|default_if_none:'' }}"
+                >
                 <button class="btn btn-outline-light me-2" type="submit">Поиск</button>
             </form>
             <form action="{% url 'logout' %}" method="post" style="display: inline;">

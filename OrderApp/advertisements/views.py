@@ -3,6 +3,7 @@ from django.views.generic import TemplateView, ListView, CreateView, DetailView,
 from .models import Advertisement
 from django.urls import reverse_lazy
 from .filters import AdvertisementFilters
+from .forms import AdsFormCreations
 
 
 # Create your views here.
@@ -10,19 +11,40 @@ from .filters import AdvertisementFilters
 class IndexPage(TemplateView):
     template_name = "ads/index.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ad_filter = AdvertisementFilters(self.request.GET, queryset=Advertisement.objects.all())
+
+        if self.request.GET:
+            context['ads'] = ad_filter.qs
+        else:
+            context['ads'] = []
+
+        context['filter'] = ad_filter
+        return context
+
 
 class AdsList(ListView):
     template_name = "ads/list-ads.html"
     model = Advertisement
     context_object_name = "ads"
-    filterset_class = AdvertisementFilters
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = AdvertisementFilters(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context
 
 
 class AdsCreate(CreateView):
     model = Advertisement
     template_name = 'ads/create-ads.html'
-    fields = ('title', 'description', 'condition', 'image', 'category')
-    success_url = reverse_lazy("advertisements:ads-list")
+    form_class = AdsFormCreations
+    success_url = reverse_lazy("ads-list")
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -37,14 +59,14 @@ class AdsDetail(DetailView):
 
 class AdsDelete(DeleteView):
     model = Advertisement
-    success_url = reverse_lazy("")
+    success_url = reverse_lazy("my-ads")
 
 
 class AdsUpdate(UpdateView):
     model = Advertisement
-    template_name = "update_ads.html"
-    fields = ('title', 'image', 'condition', 'description', 'category')
-    success_url = reverse_lazy("advertisements:ads-list")
+    template_name = "ads/update-ads.html"
+    form_class = AdsFormCreations
+    success_url = reverse_lazy("my-ads")
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
@@ -52,7 +74,19 @@ class AdsUpdate(UpdateView):
 
 
 class MyadsList(ListView):
-    template_name = "ads/my-list-of-ads"
+    template_name = "ads/my-list-of-ads.html"
+    context_object_name = "ads"
+    model = Advertisement
+
+    def get_queryset(self):
+        queryset = Advertisement.objects.filter(owner=self.request.user)
+        self.filterset = AdvertisementFilters(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context
 
 
 class ExchangeOfferList(ListView):
